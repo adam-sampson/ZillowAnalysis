@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "## Load libraries or ask to install them\nloadLibraries <- function(requiredPackages = NULL) {\n  for(pack in requiredPackages) {\n    # If statement will either load the library or give user the option to auto-install if not available\n    if(!require(pack,character.only = TRUE)) {\n      # ask the user for permission to install\n      if(menu(c('yes','no'),title=paste0('Package ',pack,' not found. Would you like to install?'))==1) {\n        install.packages(pack)\n        library(pack)\n      }\n    }\n  }\n}\n\n",
+    "created" : 1508545348190.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2251293883",
+    "id" : "A2E71BCA",
+    "lastKnownWriteTime" : 1508545475,
+    "last_content_update" : 1508545475995,
+    "path" : "~/MSA/Fall 2017/ZillowAnalysis/Functions.R",
+    "project_path" : "Functions.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

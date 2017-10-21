@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1508545518233.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "9AF1DCBF",
+    "lastKnownWriteTime" : 1508545531,
+    "last_content_update" : 1508545531356,
+    "path" : "~/MSA/Fall 2017/ZillowAnalysis/zillowAPIcredentials.R",
+    "project_path" : "zillowAPIcredentials.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

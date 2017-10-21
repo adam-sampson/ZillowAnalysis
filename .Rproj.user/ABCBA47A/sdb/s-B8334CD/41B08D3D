@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#####################\n#\n#####################\n\n#---\n# Install Necessary Resources\n#---\n  requiredPackages <- c('ZillowR')\n  source('Functions.R')\n  loadLibraries(requiredPackages)\n  rm(requiredPackages)\n\n",
+    "created" : 1508545282493.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3574026823",
+    "id" : "41B08D3D",
+    "lastKnownWriteTime" : 1508545470,
+    "last_content_update" : 1508545470865,
+    "path" : "~/MSA/Fall 2017/ZillowAnalysis/ZillowAnalysis.R",
+    "project_path" : "ZillowAnalysis.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
