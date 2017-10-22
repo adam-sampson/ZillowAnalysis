@@ -11,7 +11,8 @@
                         'tidyverse',
                         'RSQLite',
                         'DBI',
-                        'XML')
+                        'XML',
+                        'lubridate')
   loadLibraries(requiredPackages)
   rm(requiredPackages)
 
@@ -107,4 +108,16 @@
                                                     parkingType,
                                                     coveredParkingSpaces)
   zillowMerged.df <- left_join(zillowUpdates.keep.df,zillowComps.keep.df,by="zpid")
+    rm(zillowComps.keep.df)
+    rm(zillowUpdates.keep.df)
+    zillowMerged.df$lastSoldDate <- mdy(zillowMerged.df$lastSoldDate)
+    zillowMerged.df$`last-updated` <- mdy(zillowMerged.df$`last-updated`)  
+    zillowMerged.df <- zillowMerged.df[is.na(zillowMerged.df$taxAssessmentYear)==FALSE,]
+    zillowMerged.df <- zillowMerged.df[is.na(zillowMerged.df$lastSoldDate)==FALSE,]
+    
+  zillowMerged.df <- zillowMerged.df %>% rowwise() %>% mutate(natAvgAssessYear = getYearAvgFromMonthly(medianHousePrice.df,taxAssessmentYear))
+  zillowMerged.df <- ungroup(zillowMerged.df)
+  zillowMerged.df <- zillowMerged.df %>% rowwise() %>% mutate(natAvgLastSoldYear = getMedianFromDate(medianHousePrice.df,lastSoldDate))
+    zillowMerged.df <- zillowMerged.df[zillowMerged.df$natAvgLastSoldYear != 0,]                                  
+  
   

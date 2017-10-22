@@ -101,3 +101,17 @@ multipleUpdatedPropertyDetails <- function(zpidVector) {
   }
   return(zillowUpdatedOut)
 }
+
+getYearAvgFromMonthly <- function(in.df,year) {
+  in.df <- in.df[year(in.df$DATE)==year,]
+  out <- in.df %>% group_by(year(DATE)) %>% summarise(mean = trunc(mean(MSPNHSUS)))
+  return(out$mean)
+}
+
+getMedianFromDate <- function(in.df,in.date){
+  in.df <- in.df[year(in.df$DATE) == year(in.date),]
+  in.df <- in.df[month(in.df$DATE) == month(in.date),]
+  out <- in.df$MSPNHSUS
+  if(length(out) == 0) { out <- 0 }
+  return(out)
+}
