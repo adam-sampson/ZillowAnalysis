@@ -12,7 +12,11 @@
                         'RSQLite',
                         'DBI',
                         'XML',
-                        'lubridate')
+                        'lubridate',
+                        'corrplot',
+                        'stringr',
+                        'car',
+                        'olsrr')
   loadLibraries(requiredPackages)
   rm(requiredPackages)
 
@@ -120,4 +124,46 @@
   zillowMerged.df <- zillowMerged.df %>% rowwise() %>% mutate(natAvgLastSoldYear = getMedianFromDate(medianHousePrice.df,lastSoldDate))
     zillowMerged.df <- zillowMerged.df[zillowMerged.df$natAvgLastSoldYear != 0,]                                  
   
+#---
+# Create regression model
+#---
+  #-
+  # Create temp variable to protect raw data, cleanup temp
+  #-
+    zillowMerged.int.df <- zillowMerged.df
+    # remove , from zindexValue number
+    zillowMerged.int.df$zindexValue <- str_replace(zillowMerged.int.df$zindexValue,",","")
+    # convert numberic columns to numeric
+    for(i in c(6:11,23:30)) {
+      zillowMerged.int.df[,i] <- as.data.frame(lapply(zillowMerged.int.df[,i],as.numeric),stringsAsFactors = FALSE)
+    }
   
+  #-
+  # Review Data to determine good variables
+  #-
+    zillow.cor <- cor(na.omit(select(zillowMerged.int.df)),6:11,23:30) 
+    corrplot(zillow.cor)
+    scatterplot(zillowMerged.int.df$lotSizeSqFt, zillowMerged.int.df$taxAssessment)
+    
+    zillow.model <- lm(zindexValue ~ finishedSqFt + numRooms + bedrooms + bathrooms + lotSizeSqFt + zipcode + taxAssessment, data=zillowMerged.int.df)
+    summary(zillow.model)
+    confint(zillow.model)
+    residualPlot(zillow.model)
+    influenceIndexPlot(zillow.model)
+    #check for colinearity problems > 10
+    vif(zillow.model) 
+   
+  #-
+  # Scale Data
+  #-
+    
+  #-
+  # Transforming Data
+  #-
+    
+  #-
+  # Using stepAIC to predict which variables to use in model
+  #-
+    AIC <- ols_stepaic_forward(zillow.model,details=TRUE)
+    AIC
+    

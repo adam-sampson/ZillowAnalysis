@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1508709984691.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "62CE5E1D",
+    "lastKnownWriteTime" : 1508709899,
+    "last_content_update" : 1508709984691,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "1AC13EF9",
+        "caption" : "zillowMerged.df",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=zillowMerged.df&cache_key=1AC13EF9",
+        "displayedObservations" : 434,
+        "environment" : "",
+        "object" : "zillowMerged.df",
+        "preview" : 0,
+        "totalObservations" : 434,
+        "variables" : 30
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

@@ -6,7 +6,7 @@ loadLibraries <- function(requiredPackages = NULL) {
       # ask the user for permission to install
       if(menu(c('yes','no'),title=paste0('Package ',pack,' not found. Would you like to install?'))==1) {
         install.packages(pack)
-        delay(1000)
+        Sys.sleep(1)
         require(pack)
       }
     }
