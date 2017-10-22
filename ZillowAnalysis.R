@@ -145,7 +145,7 @@
     corrplot(zillow.cor)
     scatterplot(zillowMerged.int.df$lotSizeSqFt, zillowMerged.int.df$taxAssessment)
     
-    zillow.model <- lm(zindexValue ~ finishedSqFt + numRooms + bedrooms + bathrooms + lotSizeSqFt + zipcode + taxAssessment, data=zillowMerged.int.df)
+    zillow.model <- lm(zindexValue ~ finishedSqFt + numRooms + bedrooms + bathrooms + lotSizeSqFt + zipcode + parkingType + basement + exteriorMaterial + taxAssessment, data=zillowMerged.int.df)
     summary(zillow.model)
     confint(zillow.model)
     residualPlot(zillow.model)
@@ -166,4 +166,15 @@
   #-
     AIC <- ols_stepaic_forward(zillow.model,details=TRUE)
     AIC
+  
+  #-
+  # Try an adjusted model based on AIC
+  #-
+    zillow.model <- lm(zindexValue ~ bedrooms + bathrooms + lotSizeSqFt + zipcode, data=zillowMerged.int.df)
+    summary(zillow.model)
+    confint(zillow.model)
+    residualPlot(zillow.model)
+    influenceIndexPlot(zillow.model)
+    #check for colinearity problems > 10
+    vif(zillow.model)
     
