@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1508703294368.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B359B05A",
+    "lastKnownWriteTime" : 8457606642722434671,
+    "last_content_update" : 1508703294368,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "4751C255",
+        "caption" : "zillowUpdates",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=zillowUpdates&cache_key=4751C255",
+        "displayedObservations" : 462,
+        "environment" : "",
+        "object" : "zillowUpdates",
+        "preview" : 0,
+        "totalObservations" : 462,
+        "variables" : 46
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

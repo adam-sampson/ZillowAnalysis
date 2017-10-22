@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1508703414144.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "C44995F6",
+    "lastKnownWriteTime" : 32370120545140837,
+    "last_content_update" : 1508703414144,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "F2BCDE9B",
+        "caption" : "zillowComps.df",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=zillowComps.df&cache_key=F2BCDE9B",
+        "displayedObservations" : 2136,
+        "environment" : "",
+        "object" : "zillowComps.df",
+        "preview" : 0,
+        "totalObservations" : 2136,
+        "variables" : 26
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
