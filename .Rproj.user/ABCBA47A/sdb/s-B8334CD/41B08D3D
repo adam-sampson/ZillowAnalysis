@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#####################\n#\n#####################\n\n#---\n# Install Necessary Resources\n#---\n<<<<<<< HEAD\n  source('Functions.R')  \n  requiredPackages <- c('ZillowR',\n                        'readr',\n                        'tidyverse',\n                        'RSQLite',\n                        'DBI',\n                        'XML')\n  loadLibraries(requiredPackages)\n  rm(requiredPackages)\n\n  source('Functions.R')\n  source('zillowAPIcredentials.R')\n  # Remove source zillow credentials and insert your ZWSID below\n  # set_zillow_web_service_id(ZWSID)\n  #   rm(ZWSID)\n\n#---\n# Create a local database to store data\n#---\n  mydb <- dbConnect(RSQLite::SQLite(),\"my-db.sqlite\")\n  \n    \n#---\n# Create a list of addresses from Jefferson County Public Data\n#---\n  # http://data.lojic.org/\n  \n  jcky.addresses <- createResidentialAddressList('Jefferson_County_KY_Zoning.csv',\n                                                 'Jefferson_County_KY_Address_Points.csv')\n  # dbWriteTable(mydb, \"jckyaddresses\", jcky.addresses)  \n  \n  # Selecting a random list of 6k addresses. Given an API limit of 1k per day, this\n  # should cover the needs of an analysis due in 6 days.\n  jcky.tolookup <- jcky.addresses %>% sample_n(6000, replace=FALSE)\n  dbWriteTable(mydb, \"jckytolookup\", jcky.tolookup)\n  rm(jcky.addresses)\n\n#---\n# Create list of data for median house price per month\n#---\n  medianHousePrice.df <- read_csv(\"MSPNHSUS.csv\")\n   dbWriteTable(mydb,\"medianHousePrice\",medianHousePrice.df)\n#---\n# Download Zillow data from API\n#---\n  # Get 500 addresses from list of addresses and do a deep search on zillow\n  zillowSearch.df <- multipleDeepSearchZillow(jcky.tolookup,1000:1500)\n    dbWriteTable(mydb, \"zillowDeepSearch\",zillowSearch.df)\n  \n  # Unfortunately, the deep search doesn't include enough information.\n  # Also, many of these randomly selected properties are not in the Updated data \n  # because they have not been sold recently enought to be in Zillow database.\n  # However, most comps have been updated with full details, and comps have a bit\n  # more information themselves...so next step is to get comps, we should be able\n  # to get 25 per zpid and per API call...so let's do it.\n  zillowComps.df <- multipleDeepCompsZillow(zillowSearch.df$zpid,25)\n    # if total rooms is empty there is less likely to be Updated data...so remove those\n    zillowComps.df <- zillowComps.df %>% filter(is.na(totalRooms)==FALSE)\n    \n  \n  # It is possible these comps are duplicates. Need to fix that.\n  zillowComps.df <- zillowComps.df[duplicated(zillowComps.df$zpid)==FALSE,]\n    dbWriteTable(mydb, \"zillowDeepComps\",zillowComps.df)\n    \n  # Finally, what we really want is the Updated data because it is quite rich. API calls\n  # are limited so 500 of these should be a good number.\n  zillowUpdates <- multipleUpdatedPropertyDetails(zillowComps.df$zpid[1:500])\n    \n#---\n# Combine median house prices, zillow deep comps data and zillow update data, then clean results for analysis\n#---\n  \n=======\n  requiredPackages <- c('ZillowR')\n  source('Functions.R')\n  loadLibraries(requiredPackages)\n  rm(requiredPackages)\n\n>>>>>>> eca7cbc2c7c72c8ff13371d67ad25b2309330f83\n",
+    "created" : 1508545282493.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3332379348",
+    "id" : "41B08D3D",
+    "lastKnownWriteTime" : 1508704526,
+    "last_content_update" : 1508704526,
+    "path" : "~/MSA/Fall 2017/ZillowAnalysis/ZillowAnalysis.R",
+    "project_path" : "ZillowAnalysis.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
