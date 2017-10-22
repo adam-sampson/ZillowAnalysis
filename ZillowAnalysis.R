@@ -5,7 +5,6 @@
 #---
 # Install Necessary Resources
 #---
-<<<<<<< HEAD
   source('Functions.R')  
   requiredPackages <- c('ZillowR',
                         'readr',
@@ -78,10 +77,4 @@
 # Combine median house prices, zillow deep comps data and zillow update data, then clean results for analysis
 #---
   
-=======
-  requiredPackages <- c('ZillowR')
-  source('Functions.R')
-  loadLibraries(requiredPackages)
-  rm(requiredPackages)
 
->>>>>>> eca7cbc2c7c72c8ff13371d67ad25b2309330f83
