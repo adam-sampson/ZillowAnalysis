@@ -76,5 +76,35 @@
 #---
 # Combine median house prices, zillow deep comps data and zillow update data, then clean results for analysis
 #---
+  zillowComps.keep.df <- zillowComps.df %>% select(zpid, 
+                                                   taxAssessmentYear, 
+                                                   taxAssessment,
+                                                   lastSoldDate,
+                                                   `last-updated`,
+                                                   percentile,
+                                                   zindexValue)
+  zillowUpdates.keep.df <- zillowUpdates %>% select(zpid,
+                                                    street,
+                                                    zipcode,
+                                                    city,
+                                                    state,
+                                                    numRooms,
+                                                    bedrooms,
+                                                    bathrooms,
+                                                    finishedSqFt,
+                                                    lotSizeSqFt,
+                                                    yearBuilt,
+                                                    coveredParkingSpaces,
+                                                    roof,
+                                                    exteriorMaterial,
+                                                    heatingSources,
+                                                    heatingSystem,
+                                                    coolingSystem,
+                                                    floorCovering,
+                                                    architecture,
+                                                    numFloors,
+                                                    basement,
+                                                    parkingType,
+                                                    coveredParkingSpaces)
+  zillowMerged.df <- left_join(zillowUpdates.keep.df,zillowComps.keep.df,by="zpid")
   
-

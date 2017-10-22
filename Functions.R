@@ -6,18 +6,13 @@ loadLibraries <- function(requiredPackages = NULL) {
       # ask the user for permission to install
       if(menu(c('yes','no'),title=paste0('Package ',pack,' not found. Would you like to install?'))==1) {
         install.packages(pack)
-<<<<<<< HEAD
         delay(1000)
         require(pack)
-=======
-        library(pack)
->>>>>>> eca7cbc2c7c72c8ff13371d67ad25b2309330f83
       }
     }
   }
 }
 
-<<<<<<< HEAD
 ## Load Jefferson County data for addresses and zoning and output single residence addresses
 createResidentialAddressList <- function(jcky.zoning, jcky.addresses) {
   
@@ -106,5 +101,3 @@ multipleUpdatedPropertyDetails <- function(zpidVector) {
   }
   return(zillowUpdatedOut)
 }
-=======
->>>>>>> eca7cbc2c7c72c8ff13371d67ad25b2309330f83
