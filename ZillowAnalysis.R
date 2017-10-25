@@ -37,27 +37,28 @@
 #---
   # http://data.lojic.org/
   
-  jcky.addresses <- createResidentialAddressList('Jefferson_County_KY_Zoning.csv',
-                                                 'Jefferson_County_KY_Address_Points.csv')
-  # dbWriteTable(mydb, "jckyaddresses", jcky.addresses)  
+  # jcky.addresses <- createResidentialAddressList('Jefferson_County_KY_Zoning.csv',
+  #                                                'Jefferson_County_KY_Address_Points.csv')
   
   # Selecting a random list of 6k addresses. Given an API limit of 1k per day, this
   # should cover the needs of an analysis due in 6 days.
-  jcky.tolookup <- jcky.addresses %>% sample_n(6000, replace=FALSE)
-  dbWriteTable(mydb, "jckytolookup", jcky.tolookup)
-  rm(jcky.addresses)
-
+    # jcky.tolookup <- jcky.addresses %>% sample_n(6000, replace=FALSE)
+    # dbWriteTable(mydb, "jckytolookup", "jcky.tolookup")
+    # rm(jcky.addresses)
+  jcky.tolookup <- dbGetQuery(mydb,"Select * from jckytolookup")
 #---
 # Create list of data for median house price per month
 #---
-  medianHousePrice.df <- read_csv("MSPNHSUS.csv")
-   dbWriteTable(mydb,"medianHousePrice",medianHousePrice.df)
+  # medianHousePrice.df <- read_csv("MSPNHSUS.csv")
+  #  dbWriteTable(mydb,"medianHousePrice",medianHousePrice.df)
+  medianHousePrice.df <- dbGetQuery(mydb,"select * from medianHousePrice")
 #---
 # Download Zillow data from API
 #---
   # Get 500 addresses from list of addresses and do a deep search on zillow
-  zillowSearch.df <- multipleDeepSearchZillow(jcky.tolookup,1000:1500)
-    dbWriteTable(mydb, "zillowDeepSearch",zillowSearch.df)
+  # zillowSearch.df <- multipleDeepSearchZillow(jcky.tolookup,1000:1500)
+  #   dbWriteTable(mydb, "zillowDeepSearch",zillowSearch.df)
+  zillowSearch.df <- dbGetQuery(mydb,"select * from zillowDeepSearch")
   
   # Unfortunately, the deep search doesn't include enough information.
   # Also, many of these randomly selected properties are not in the Updated data 
@@ -65,14 +66,15 @@
   # However, most comps have been updated with full details, and comps have a bit
   # more information themselves...so next step is to get comps, we should be able
   # to get 25 per zpid and per API call...so let's do it.
-  zillowComps.df <- multipleDeepCompsZillow(zillowSearch.df$zpid,25)
-    # if total rooms is empty there is less likely to be Updated data...so remove those
-    zillowComps.df <- zillowComps.df %>% filter(is.na(totalRooms)==FALSE)
+  # zillowComps.df <- multipleDeepCompsZillow(zillowSearch.df$zpid,25)
+  #   # if total rooms is empty there is less likely to be Updated data...so remove those
+  #   zillowComps.df <- zillowComps.df %>% filter(is.na(totalRooms)==FALSE)
     
   
   # It is possible these comps are duplicates. Need to fix that.
-  zillowComps.df <- zillowComps.df[duplicated(zillowComps.df$zpid)==FALSE,]
-    dbWriteTable(mydb, "zillowDeepComps",zillowComps.df)
+  # zillowComps.df <- zillowComps.df[duplicated(zillowComps.df$zpid)==FALSE,]
+  #   dbWriteTable(mydb, "zillowDeepComps",zillowComps.df)
+  zillowComps.df <- dbGetQuery(mydb,"select * from zillowDeepComps")
     
   # Finally, what we really want is the Updated data because it is quite rich. API calls
   # are limited so 500 of these should be a good number.
