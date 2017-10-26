@@ -1,5 +1,5 @@
 zillowTemp <- GetDeepComps(zpid = as.character(zillowSearch.df$zpid[1]),
-                           count=1,
+                           count=3,
                            zws_id = get_zillow_web_service_id())
 
 badflatten <- flattenZillowList(zillowTemp)
@@ -73,10 +73,12 @@ recursiveListExtract <- function(input.list) {
     #recursively call the function
     for(each.list in input.list$children){
       temp <- recursiveListExtract(each.list)
-      if(exists("out")) {
-        out <- cbind(out,temp)
-      } else {
-        out <- temp
+      if(length(temp)>0) {
+        if(exists('out')==TRUE) {
+          out <- cbind(out,temp)
+        } else {
+          out <- temp
+        }
       }
     }
   } 
@@ -84,16 +86,33 @@ recursiveListExtract <- function(input.list) {
     print("Values detected - convert") 
     print(input.list$name)
     print(input.list[[1]])
-    out <- data.frame(as.character(input.list[[1]]))
+    print(paste0(unlist(input.list[[1]]$value)))
+    out <- data.frame(paste0(input.list$children$text$value))
+    print(out)
     colnames(out) <- input.list$name
+    print(out)
   }
   # if(exists("out") == FALSE) {
   #   out <- NULL
   # }
+  if(exists("out")==FALSE) {out <- data.frame()}
   return(out)
 }
 
-testdf <- recursiveListExtract(zillowTemp$response)
+multipleListExtract <- function(input.list) {
+  for(each.list in input.list$children) {
+    tempList <- recursiveListExtract(each.list)
+    if(exists('outList')==TRUE) {
+      outList <- bind_rows(outList,tempList)
+    } else {
+      outList <- tempList
+    }
+  }
+  return(outList)
+}
+
+# testdf <- recursiveListExtract(zillowTemp$response)
+testdf <- multipleListExtract(zillowTemp$response$children$properties$children$comparables)
 
 zillowTemp.xml <- zillowTemp
 zillowTemp.xml <- xmlParse(zillowTemp.xml)

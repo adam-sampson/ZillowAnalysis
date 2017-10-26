@@ -43,9 +43,48 @@ createResidentialAddressList <- function(jcky.zoning, jcky.addresses) {
                            ZONING_NAM == "RURAL RESIDENTIAL" | ZONING_NAM == "RURAL RES OVERLAY")
 }
 
-recursiveListExtract <- function(xml.obj) {
-  ## We can take advantage of the fact that only objects without children have values
-  
+recursiveListExtract <- function(input.list) {
+  if(("children" %in% attributes(input.list)$names) & !("value" %in% attributes(input.list$children$text)$names)) {
+    print("Debug - Detected children in list")
+    #recursively call the function
+    for(each.list in input.list$children){
+      temp <- recursiveListExtract(each.list)
+      if(length(temp)>0) {
+        if(exists('out')==TRUE) {
+          out <- cbind(out,temp)
+        } else {
+          out <- temp
+        }
+      }
+    }
+  } 
+  if(("value" %in% attributes(input.list$children$text)$names)) {
+    print("Values detected - convert") 
+    print(input.list$name)
+    print(input.list[[1]])
+    print(paste0(unlist(input.list[[1]]$value)))
+    out <- data.frame(paste0(input.list$children$text$value))
+    print(out)
+    colnames(out) <- input.list$name
+    print(out)
+  }
+  # if(exists("out") == FALSE) {
+  #   out <- NULL
+  # }
+  if(exists("out")==FALSE) {out <- data.frame()}
+  return(out)
+}
+
+multipleListExtract <- function(input.list) {
+  for(each.list in input.list$children) {
+    tempList <- recursiveListExtract(each.list)
+    if(exists('outList')==TRUE) {
+      outList <- bind_rows(outList,tempList)
+    } else {
+      outList <- tempList
+    }
+  }
+  return(outList)
 }
 
 flattenZillowList <- function(in.list) {
