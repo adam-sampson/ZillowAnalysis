@@ -56,6 +56,8 @@ flattenZillowList <- function(in.list) {
   # each actual name/value is in format name = in.list[n] value = in.list[n+2] so check for this
   out.mat <- NULL
   for(cnt in 1:(length(in.list)-2)) {
+    # Either there will be name followed by value 2 later or
+    # there may be name followed by currency then value 2 later
     if(endsWith(attributes(in.list[cnt])$names,"name") == TRUE && 
        endsWith(attributes(in.list[cnt+2])$names,"value") == TRUE) {
       temp <- matrix(data=in.list[[cnt+2]],dimnames = list(NULL,in.list[[cnt]]))
