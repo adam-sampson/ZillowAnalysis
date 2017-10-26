@@ -97,6 +97,7 @@ flattenZillowList <- function(in.list) {
   for(cnt in 1:(length(in.list)-2)) {
     # Either there will be name followed by value 2 later or
     # there may be name followed by currency then value 2 later
+    ## Error: Rule Fails.
     if(endsWith(attributes(in.list[cnt])$names,"name") == TRUE && 
        endsWith(attributes(in.list[cnt+2])$names,"value") == TRUE) {
       temp <- matrix(data=in.list[[cnt+2]],dimnames = list(NULL,in.list[[cnt]]))
