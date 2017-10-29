@@ -87,32 +87,39 @@ multipleListExtract <- function(input.list) {
   return(outList)
 }
 
-flattenZillowList <- function(in.list) {
-  # flatten the list 
-  in.list <- unlist(in.list)
-  
-  # cleanup the output to usable format
-  # each actual name/value is in format name = in.list[n] value = in.list[n+2] so check for this
-  out.mat <- NULL
-  for(cnt in 1:(length(in.list)-2)) {
-    # Either there will be name followed by value 2 later or
-    # there may be name followed by currency then value 2 later
-    ## Error: Rule Fails.
-    if(endsWith(attributes(in.list[cnt])$names,"name") == TRUE && 
-       endsWith(attributes(in.list[cnt+2])$names,"value") == TRUE) {
-      temp <- matrix(data=in.list[[cnt+2]],dimnames = list(NULL,in.list[[cnt]]))
-      out.mat <- cbind(out.mat,temp)
-    }
-  }
-  out.mat <- as.data.frame(out.mat,stringsAsFactors=FALSE)
-  return(out.mat)
+singleListExtract <- function(input.list) {
+  tempList <- recursiveListExtract(input.list)
+  outList <- tempList
+  return(outList)
 }
+
+# flattenZillowList <- function(in.list) {
+#   # flatten the list 
+#   in.list <- unlist(in.list)
+#   
+#   # cleanup the output to usable format
+#   # each actual name/value is in format name = in.list[n] value = in.list[n+2] so check for this
+#   out.mat <- NULL
+#   for(cnt in 1:(length(in.list)-2)) {
+#     # Either there will be name followed by value 2 later or
+#     # there may be name followed by currency then value 2 later
+#     ## Error: Rule Fails.
+#     if(endsWith(attributes(in.list[cnt])$names,"name") == TRUE && 
+#        endsWith(attributes(in.list[cnt+2])$names,"value") == TRUE) {
+#       temp <- matrix(data=in.list[[cnt+2]],dimnames = list(NULL,in.list[[cnt]]))
+#       out.mat <- cbind(out.mat,temp)
+#     }
+#   }
+#   out.mat <- as.data.frame(out.mat,stringsAsFactors=FALSE)
+#   return(out.mat)
+# }
 
 multipleDeepSearchZillow <- function(in.df, posVector) {
   zillowSearchOut <- NULL
   for(i in posVector) {
     zillowTemp <- GetDeepSearchResults(address = in.df$FULL_ADDRESS[i],citystatezip = as.character(in.df$ZIPCODE[i]),zws_id = get_zillow_web_service_id())
-    zillowTemp <- flattenZillowList(zillowTemp)
+    # zillowTemp <- flattenZillowList(zillowTemp)
+    zillowTemp <- multipleListExtract(zillowTemp$response)
     zillowSearchOut <- bind_rows(zillowSearchOut,zillowTemp)
   }
   return(zillowSearchOut)
@@ -122,11 +129,16 @@ multipleDeepCompsZillow <- function(zpidVector,count) {
   zillowUpdatedOut <- NULL
   for(i in 1:length(zpidVector)) {
     zillowTemp <- GetDeepComps(zpid = as.character(zpidVector[i]),count=count,zws_id = get_zillow_web_service_id())
-    if(startsWith(zillowTemp[[2]]$text,"Error")==FALSE) {
-      for(j in 1:length(zillowTemp[[3]][[1]][[2]])) {
-        zillowTemp2 <- flattenZillowList(zillowTemp[[3]][[1]][[2]][j])
+    if(startsWith(zillowTemp$message$text,"Error")==FALSE) {
+      zillowTemp2 <- singleListExtract(zillowTemp$response$children$properties$children$principal)
+      zillowUpdatedOut <- bind_rows(zillowUpdatedOut,zillowTemp2)
+      for(j in 1:length(zillowTemp$response$children$properties$children$comparables)) {
+        zillowTemp2 <- multipleListExtract(zillowTemp$response$children$properties$children$comparables)
         zillowUpdatedOut <- bind_rows(zillowUpdatedOut,zillowTemp2)
       }
+    } else {
+      warning("Error detected in zillow API call.")
+      warning(zillowTemp$message)
     }
   }
   return(zillowUpdatedOut)
@@ -137,8 +149,12 @@ multipleUpdatedPropertyDetails <- function(zpidVector) {
   for(i in 1:length(zpidVector)) {
     zillowTemp <- GetUpdatedPropertyDetails(zpid = as.character(zpidVector[i]),zws_id = get_zillow_web_service_id())
     if(startsWith(zillowTemp[[2]]$text,"Error")==FALSE) {
-      zillowTemp <- flattenZillowList(zillowTemp)
+      # zillowTemp <- flattenZillowList(zillowTemp)
+      zillowTemp <- singleListExtract(zillowTemp$response)
       zillowUpdatedOut <- bind_rows(zillowUpdatedOut,zillowTemp)
+    } else {
+      warning("Error detected in zillow API call.")
+      warning(zillowTemp$message)
     }
   }
   return(zillowUpdatedOut)

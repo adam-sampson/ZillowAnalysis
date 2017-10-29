@@ -2,6 +2,11 @@ zillowTemp <- GetDeepComps(zpid = as.character(zillowSearch.df$zpid[1]),
                            count=3,
                            zws_id = get_zillow_web_service_id())
 
+zillowSearchTemp <- GetDeepSearchResults(address = jcky.tolookup$FULL_ADDRESS[1],citystatezip = as.character(jcky.tolookup$ZIPCODE[1]),zws_id = get_zillow_web_service_id())
+
+zillowUpdatedTemp <- GetUpdatedPropertyDetails(zpid = as.character(testMultipleDeepComps$zpid[3]),
+                                               zws_id = get_zillow_web_service_id())
+
 badflatten <- flattenZillowList(zillowTemp)
 
 zillowTemp[[3]][[1]][[1]] #principal
@@ -67,49 +72,49 @@ testToDF2 <- data.frame(matrix(zillowTemp[[3]][[1]][[2]][[1]], nrow=1, byrow=T),
 #   return(out)
 # }
 
-recursiveListExtract <- function(input.list) {
-  if(("children" %in% attributes(input.list)$names) & !("value" %in% attributes(input.list$children$text)$names)) {
-    print("Debug - Detected children in list")
-    #recursively call the function
-    for(each.list in input.list$children){
-      temp <- recursiveListExtract(each.list)
-      if(length(temp)>0) {
-        if(exists('out')==TRUE) {
-          out <- cbind(out,temp)
-        } else {
-          out <- temp
-        }
-      }
-    }
-  } 
-  if(("value" %in% attributes(input.list$children$text)$names)) {
-    print("Values detected - convert") 
-    print(input.list$name)
-    print(input.list[[1]])
-    print(paste0(unlist(input.list[[1]]$value)))
-    out <- data.frame(paste0(input.list$children$text$value))
-    print(out)
-    colnames(out) <- input.list$name
-    print(out)
-  }
-  # if(exists("out") == FALSE) {
-  #   out <- NULL
-  # }
-  if(exists("out")==FALSE) {out <- data.frame()}
-  return(out)
-}
-
-multipleListExtract <- function(input.list) {
-  for(each.list in input.list$children) {
-    tempList <- recursiveListExtract(each.list)
-    if(exists('outList')==TRUE) {
-      outList <- bind_rows(outList,tempList)
-    } else {
-      outList <- tempList
-    }
-  }
-  return(outList)
-}
+# recursiveListExtract <- function(input.list) {
+#   if(("children" %in% attributes(input.list)$names) & !("value" %in% attributes(input.list$children$text)$names)) {
+#     print("Debug - Detected children in list")
+#     #recursively call the function
+#     for(each.list in input.list$children){
+#       temp <- recursiveListExtract(each.list)
+#       if(length(temp)>0) {
+#         if(exists('out')==TRUE) {
+#           out <- cbind(out,temp)
+#         } else {
+#           out <- temp
+#         }
+#       }
+#     }
+#   } 
+#   if(("value" %in% attributes(input.list$children$text)$names)) {
+#     print("Values detected - convert") 
+#     print(input.list$name)
+#     print(input.list[[1]])
+#     print(paste0(unlist(input.list[[1]]$value)))
+#     out <- data.frame(paste0(input.list$children$text$value))
+#     print(out)
+#     colnames(out) <- input.list$name
+#     print(out)
+#   }
+#   # if(exists("out") == FALSE) {
+#   #   out <- NULL
+#   # }
+#   if(exists("out")==FALSE) {out <- data.frame()}
+#   return(out)
+# }
+# 
+# multipleListExtract <- function(input.list) {
+#   for(each.list in input.list$children) {
+#     tempList <- recursiveListExtract(each.list)
+#     if(exists('outList')==TRUE) {
+#       outList <- bind_rows(outList,tempList)
+#     } else {
+#       outList <- tempList
+#     }
+#   }
+#   return(outList)
+# }
 
 # testdf <- recursiveListExtract(zillowTemp$response)
 testdf <- multipleListExtract(zillowTemp$response$children$properties$children$comparables)
@@ -117,3 +122,15 @@ testdf <- multipleListExtract(zillowTemp$response$children$properties$children$c
 zillowTemp.xml <- zillowTemp
 zillowTemp.xml <- xmlParse(zillowTemp.xml)
 
+#######
+testMultipleDeepSearch <- multipleDeepSearchZillow(jcky.tolookup,1:3)
+
+testMultipleDeepComps <- multipleDeepCompsZillow(testMultipleDeepSearch$zpid[2],3)
+  temp1 <- multipleListExtract(zillowTemp$response$children$properties$children$principal)
+  temp2 <- multipleListExtract(zillowTemp$response$children$properties$children$comparables)
+  temp1 <- multipleListExtract(zillowTemp$response$children$properties)
+  temp1 <- singleListExtract(zillowTemp$response$children$properties$children$principal)
+
+testMultipleDeepUpdate <- multipleUpdatedPropertyDetails(testMultipleDeepComps$zpid[3])
+  temp3 <- singleListExtract(zillowUpdatedTemp$response)
+  
