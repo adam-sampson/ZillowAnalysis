@@ -45,7 +45,6 @@ createResidentialAddressList <- function(jcky.zoning, jcky.addresses) {
 
 recursiveListExtract <- function(input.list) {
   if(("children" %in% attributes(input.list)$names) & !("value" %in% attributes(input.list$children$text)$names)) {
-    print("Debug - Detected children in list")
     #recursively call the function
     for(each.list in input.list$children){
       temp <- recursiveListExtract(each.list)
@@ -59,18 +58,9 @@ recursiveListExtract <- function(input.list) {
     }
   } 
   if(("value" %in% attributes(input.list$children$text)$names)) {
-    print("Values detected - convert") 
-    print(input.list$name)
-    print(input.list[[1]])
-    print(paste0(unlist(input.list[[1]]$value)))
     out <- data.frame(paste0(input.list$children$text$value))
-    print(out)
     colnames(out) <- input.list$name
-    print(out)
   }
-  # if(exists("out") == FALSE) {
-  #   out <- NULL
-  # }
   if(exists("out")==FALSE) {out <- data.frame()}
   return(out)
 }
@@ -83,6 +73,9 @@ multipleListExtract <- function(input.list) {
     } else {
       outList <- tempList
     }
+  }
+  if(exists('outList')==FALSE) {
+    outList <- NULL
   }
   return(outList)
 }
@@ -148,7 +141,7 @@ multipleUpdatedPropertyDetails <- function(zpidVector) {
   zillowUpdatedOut <- NULL
   for(i in 1:length(zpidVector)) {
     zillowTemp <- GetUpdatedPropertyDetails(zpid = as.character(zpidVector[i]),zws_id = get_zillow_web_service_id())
-    if(startsWith(zillowTemp[[2]]$text,"Error")==FALSE) {
+    if(startsWith(zillowTemp$message$text,"Error")==FALSE) {
       # zillowTemp <- flattenZillowList(zillowTemp)
       zillowTemp <- singleListExtract(zillowTemp$response)
       zillowUpdatedOut <- bind_rows(zillowUpdatedOut,zillowTemp)
