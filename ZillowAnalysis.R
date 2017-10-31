@@ -147,7 +147,13 @@
   zillowMerged.df <- ungroup(zillowMerged.df)
   zillowMerged.df <- zillowMerged.df %>% rowwise() %>% mutate(natAvgLastSoldYear = getMedianFromDate(medianHousePrice.df,lastSoldDate))
     zillowMerged.df <- zillowMerged.df[zillowMerged.df$natAvgLastSoldYear != 0,]                                  
-  
+    zillowMerged.df <- ungroup(zillowMerged.df)
+  zillowMerged.df <- zillowMerged.df %>% rowwise() %>% mutate(adjTaxAssessment = as.numeric(taxAssessment) * 
+                                                  (getYearAvgFromMonthly(medianHousePrice.df,2017)/
+                                                     getYearAvgFromMonthly(medianHousePrice.df,taxAssessmentYear)))
+  zillowMerged.df <- zillowMerged.df %>% rowwise() %>% mutate(adjLastSoldPrice = as.numeric(lastSoldPrice) * 
+                                                                (getYearAvgFromMonthly(medianHousePrice.df,2017)/
+                                                                   getYearAvgFromMonthly(medianHousePrice.df,year(lastSoldDate))))
 #---
 # Create regression model
 #---
@@ -162,21 +168,27 @@
     for(i in c(4:9,11,12,14:20)) {
       zillowMerged.int.df[,i] <- as.data.frame(lapply(zillowMerged.int.df[,i],as.numeric),stringsAsFactors = FALSE)
     }
-  
+    
+    zillowMerged.train.df <- na.omit(zillowMerged.int.df[1:588,]) 
+    zillowMerged.test.df <- na.omit(zillowMerged.int.df[589:888,])
+      rm(zillowMerged.int.df)
   #-
   # Review Data to determine good variables
   #-
-    zillow.cor <- cor(na.omit(zillowMerged.int.df[,c(4:9,11,12,14:20)])) 
+    zillow.cor <- cor(na.omit(zillowMerged.train.df[,c(4:9,11,12,14:20)])) 
     corrplot(zillow.cor)
-    scatterplot(zillowMerged.int.df$lotSizeSqFt, zillowMerged.int.df$taxAssessment)
+    # scatterplot(zillowMerged.train.df$lotSizeSqFt, zillowMerged.train.df$zEstAmount)
     
-    zillow.model <- lm(zindexValue ~ finishedSqFt + numRooms + bedrooms + bathrooms + lotSizeSqFt + zipcode + parkingType + basement + exteriorMaterial + taxAssessment, data=zillowMerged.int.df)
-    summary(zillow.model)
-    confint(zillow.model)
-    residualPlot(zillow.model)
-    influenceIndexPlot(zillow.model)
-    #check for colinearity problems > 10
-    vif(zillow.model) 
+    
+    
+    
+    # zillow.model <- lm(zindexValue ~ finishedSqFt + bedrooms + bathrooms + lotSizeSqFt + zipcode + taxAssessment, data=zillowMerged.train.df)
+    # summary(zillow.model)
+    # confint(zillow.model)
+    # residualPlot(zillow.model)
+    # influenceIndexPlot(zillow.model)
+    # #check for colinearity problems > 10
+    # vif(zillow.model) 
    
   #-
   # Scale Data
