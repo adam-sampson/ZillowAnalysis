@@ -112,6 +112,7 @@ multipleDeepSearchZillow <- function(in.df, posVector) {
   for(i in posVector) {
     zillowTemp <- GetDeepSearchResults(address = in.df$FULL_ADDRESS[i],citystatezip = as.character(in.df$ZIPCODE[i]),zws_id = get_zillow_web_service_id())
     # zillowTemp <- flattenZillowList(zillowTemp)
+    ## What if zillowTemp$response doesn't exist!?
     zillowTemp <- multipleListExtract(zillowTemp$response)
     zillowSearchOut <- bind_rows(zillowSearchOut,zillowTemp)
   }
@@ -122,6 +123,7 @@ multipleDeepCompsZillow <- function(zpidVector,count) {
   zillowUpdatedOut <- NULL
   for(i in 1:length(zpidVector)) {
     zillowTemp <- GetDeepComps(zpid = as.character(zpidVector[i]),count=count,zws_id = get_zillow_web_service_id())
+    ## What if zillowTemp$message$text doesn't exist due to call failure?
     if(startsWith(zillowTemp$message$text,"Error")==FALSE) {
       zillowTemp2 <- singleListExtract(zillowTemp$response$children$properties$children$principal)
       zillowUpdatedOut <- bind_rows(zillowUpdatedOut,zillowTemp2)
@@ -167,6 +169,7 @@ multipleUpdatedPropertyDetails <- function(zpidVector) {
   zillowUpdatedOut <- NULL
   for(i in 1:length(zpidVector)) {
     zillowTemp <- GetUpdatedPropertyDetails(zpid = as.character(zpidVector[i]),zws_id = get_zillow_web_service_id())
+    ## What if zillowTemp$message$text doesn't exist due to call failure?
     if(startsWith(zillowTemp$message$text,"Error")==FALSE) {
       # zillowTemp <- flattenZillowList(zillowTemp)
       zillowTemp <- singleListExtract(zillowTemp$response)
