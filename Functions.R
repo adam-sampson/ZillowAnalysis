@@ -137,6 +137,32 @@ multipleDeepCompsZillow <- function(zpidVector,count) {
   return(zillowUpdatedOut)
 }
 
+z_extract <- multipleListExtract
+
+comp_finder <- function(address,zip){
+  principal.address <- GetDeepSearchResults(address = address,citystatezip = as.character(zip),zws_id = get_zillow_web_service_id())
+  principal.address <- singleListExtract(principal.address$response)
+  
+  comps <- multipleDeepCompsZillow(principal.address$zpid,25)
+  comps <- comps[duplicated(comps$street)==FALSE,]
+  # get comps 5 deep for more data
+  tempcomps <- comps
+  for(i in 1:5) {
+    print(i)
+    for(zpid in tempcomps$zpid) {
+      temp <- multipleDeepCompsZillow(zpid,25)
+      comps <- bind_rows(comps,temp)
+      rm(temp)
+    }
+  comps <- comps[duplicated(comps$street)==FALSE,]
+  tempcomps <- anti_join(comps,tempcomps)
+  if(length(tempcomps[1])<=1) {
+    break
+  }
+  }
+  return(comps)
+}
+
 multipleUpdatedPropertyDetails <- function(zpidVector) {
   zillowUpdatedOut <- NULL
   for(i in 1:length(zpidVector)) {
