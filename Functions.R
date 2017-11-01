@@ -153,6 +153,14 @@ multipleUpdatedPropertyDetails <- function(zpidVector) {
   return(zillowUpdatedOut)
 }
 
+multipleDeepCompsList <- function(zpidVector) {
+  
+}
+
+multipleUpdatedDetailsList <- function(zpidVector) {
+  
+}
+
 getYearAvgFromMonthly <- function(in.df,year) {
   in.df <- in.df[year(in.df$DATE)==year,]
   out <- in.df %>% group_by(year(DATE)) %>% summarise(mean = trunc(mean(MSPNHSUS)))

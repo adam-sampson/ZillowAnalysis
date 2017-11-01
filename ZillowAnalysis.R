@@ -16,7 +16,9 @@
                         'corrplot',
                         'stringr',
                         'car',
-                        'olsrr')
+                        'olsrr',
+                        'Hmisc',
+                        'psych')
   loadLibraries(requiredPackages)
   rm(requiredPackages)
 
@@ -169,12 +171,33 @@
       zillowMerged.int.df[,i] <- as.data.frame(lapply(zillowMerged.int.df[,i],as.numeric),stringsAsFactors = FALSE)
     }
     
-    zillowMerged.train.df <- na.omit(zillowMerged.int.df[1:588,]) 
-    zillowMerged.test.df <- na.omit(zillowMerged.int.df[589:888,])
+    zillowMerged.train.df <- na.omit(zillowMerged.int.df[1:588,-1]) 
+    zillowMerged.test.df <- na.omit(zillowMerged.int.df[589:888,-1])
       rm(zillowMerged.int.df)
   #-
   # Review Data to determine good variables
   #-
+    summary(zillowMerged.train.df)
+    
+    pairs.panels(zillowMerged.train.df, col="red")
+      # Tax Assessment is right skewed
+      # yearBuilt may have more than one peak
+      # lot size is right skewed
+      # finished sqft is right skewed
+      # bathrooms is not very normal, and is also right skewed
+      # last sold date is not very normal
+      # last sold price is right skewed
+      # zestimate amount is right skewed
+      # value change is not very normal
+      zillowMerged.train.df$taxAssessment <- log10(zillowMerged.train.df$taxAssessment)
+      zillowMerged.train.df$lotSizeSqFt <- log10(zillowMerged.train.df$lotSizeSqFt)
+      zillowMerged.train.df$finishedSqFt <- log10(zillowMerged.train.df$finishedSqFt)
+      zillowMerged.train.df$bathrooms <- log10(zillowMerged.train.df$bathrooms)
+      zillowMerged.train.df$bedrooms <- log10(zillowMerged.train.df$bedrooms)
+      # zillowMerged.train.df$lastSoldPrice <- log10(zillowMerged.train.df$lastSoldPrice)
+      # zillowMerged.train.df$zEstAmount <- log10(zillowMerged.train.df$zEstAmount)
+      pairs.panels(zillowMerged.train.df, col="red")
+      
     zillow.cor <- cor(na.omit(zillowMerged.train.df[,c(4:9,11,12,14:20)])) 
     corrplot(zillow.cor)
     # scatterplot(zillowMerged.train.df$lotSizeSqFt, zillowMerged.train.df$zEstAmount)
