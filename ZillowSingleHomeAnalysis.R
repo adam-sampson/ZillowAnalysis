@@ -344,6 +344,10 @@ medianHousePrice.df$DATE <- ymd(medianHousePrice.df$DATE)
                zillow.test$zest[is.na(zillow.test$zest)==FALSE & is.na(test.pred)==FALSE]))
     # 29913
 
+    # let's see how this performed against the house we chose.
+    zillow.train[33,]$zest
+    train.pred[33]
+    
 #---
 # Create regression model for zest, this time assuming we want to calculate zest using lastSoldPrice
 #---
@@ -465,3 +469,8 @@ medianHousePrice.df$DATE <- ymd(medianHousePrice.df$DATE)
     mean(abs(test.pred[is.na(zillow.test$zest)==FALSE & is.na(test.pred)==FALSE] -
                zillow.test$zest[is.na(zillow.test$zest)==FALSE & is.na(test.pred)==FALSE]))
     # 10746
+    
+    # let's see how this performed against the house we chose.
+    zillow.train[33,]$zest
+    train.pred[33]
+    
